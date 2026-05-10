@@ -1,0 +1,149 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+resources:
+  - otel-collector-prom.yaml
+  # prometheus.yaml   # Phase 2
+  # grafana.yaml      # Phase 3
+
+patches:
+# checkoutservice
+- patch: |-
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: checkoutservice
+    spec:
+      template:
+        spec:
+          containers:
+            - name: server
+              env:
+              - name: COLLECTOR_SERVICE_ADDR
+                value: "otel-collector-prom:4317"
+              - name: OTEL_SERVICE_NAME
+                value: "checkoutservice"
+              - name: ENABLE_TRACING
+                value: "1"
+# currencyservice
+- patch: |-
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: currencyservice
+    spec:
+      template:
+        spec:
+          containers:
+            - name: server
+              env:
+              - name: COLLECTOR_SERVICE_ADDR
+                value: "otel-collector-prom:4317"
+              - name: OTEL_SERVICE_NAME
+                value: "currencyservice"
+              - name: ENABLE_TRACING
+                value: "1"
+# emailservice
+- patch: |-
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: emailservice
+    spec:
+      template:
+        spec:
+          containers:
+            - name: server
+              env:
+              - name: COLLECTOR_SERVICE_ADDR
+                value: "otel-collector-prom:4317"
+              - name: OTEL_SERVICE_NAME
+                value: "emailservice"
+              - name: ENABLE_TRACING
+                value: "1"
+# frontend
+- patch: |-
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: frontend
+    spec:
+      template:
+        spec:
+          containers:
+            - name: server
+              env:
+              - name: COLLECTOR_SERVICE_ADDR
+                value: "otel-collector-prom:4317"
+              - name: OTEL_SERVICE_NAME
+                value: "frontend"
+              - name: ENABLE_TRACING
+                value: "1"
+# paymentservice
+- patch: |-
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: paymentservice
+    spec:
+      template:
+        spec:
+          containers:
+            - name: server
+              env:
+              - name: COLLECTOR_SERVICE_ADDR
+                value: "otel-collector-prom:4317"
+              - name: OTEL_SERVICE_NAME
+                value: "paymentservice"
+              - name: ENABLE_TRACING
+                value: "1"
+# productcatalogservice
+- patch: |-
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: productcatalogservice
+    spec:
+      template:
+        spec:
+          containers:
+            - name: server
+              env:
+              - name: COLLECTOR_SERVICE_ADDR
+                value: "otel-collector-prom:4317"
+              - name: OTEL_SERVICE_NAME
+                value: "productcatalogservice"
+              - name: ENABLE_TRACING
+                value: "1"
+# recommendationservice
+- patch: |-
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: recommendationservice
+    spec:
+      template:
+        spec:
+          containers:
+            - name: server
+              env:
+              - name: COLLECTOR_SERVICE_ADDR
+                value: "otel-collector-prom:4317"
+              - name: OTEL_SERVICE_NAME
+                value: "recommendationservice"
+              - name: ENABLE_TRACING
+                value: "1"

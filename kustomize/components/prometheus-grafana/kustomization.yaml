@@ -19,6 +19,8 @@ resources:
   - otel-collector-prom.yaml
   - prometheus.yaml
   # grafana.yaml      # Phase 3
+  - network-policy-otel-collector-prom.yaml
+  - network-policy-prometheus.yaml
 
 patches:
 # checkoutservice

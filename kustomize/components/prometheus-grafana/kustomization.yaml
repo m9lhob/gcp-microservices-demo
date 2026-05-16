@@ -18,9 +18,17 @@ kind: Component
 resources:
   - otel-collector-prom.yaml
   - prometheus.yaml
-  # grafana.yaml      # Phase 3
+  - grafana.yaml
   - network-policy-otel-collector-prom.yaml
   - network-policy-prometheus.yaml
+  - network-policy-grafana.yaml
+
+configMapGenerator:
+- name: grafana-dashboard-services-overview
+  options:
+    disableNameSuffixHash: true
+  files:
+  - dashboards/services-overview.json
 
 patches:
 # checkoutservice

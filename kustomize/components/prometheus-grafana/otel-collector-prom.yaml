@@ -85,11 +85,14 @@ spec:
           capabilities:
             drop:
               - ALL
-          privileged: false
           readOnlyRootFilesystem: true
         ports:
         - containerPort: 4317  # OTLP gRPC
         - containerPort: 8889  # Prometheus scrape
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
         volumeMounts:
         - name: config
           mountPath: /conf

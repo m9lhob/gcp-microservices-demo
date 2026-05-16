@@ -1,6 +1,6 @@
 # Observability: Prometheus + Grafana
 
-This document describes the design and implementation plan for adding Prometheus and Grafana observability to Online Boutique, using the existing OpenTelemetry instrumentation as the data source.
+This document describes the Prometheus and Grafana observability stack for Online Boutique, using the existing OpenTelemetry instrumentation as the data source.
 
 ## Goals
 
@@ -88,15 +88,16 @@ All resources live in a new kustomize component:
 
 ```
 kustomize/components/prometheus-grafana/
-├── kustomization.yaml          # component definition + service env patches
-├── otel-collector-prom.yaml    # OTel Collector (prom-focused config)
+├── kustomization.yaml                    # component definition + service env patches
+├── otel-collector-prom.yaml              # OTel Collector (prom-focused config)
+├── prometheus.yaml                       # Prometheus deployment + service
+├── grafana.yaml                          # Grafana deployment, service + provisioning
+├── dashboards/
+│   └── services-overview.json           # pre-built RED metrics dashboard
+├── network-policy-otel-collector-prom.yaml
+├── network-policy-prometheus.yaml
+└── network-policy-grafana.yaml
 ```
-
-Planned for future phases (not in this PR):
-
-- `prometheus.yaml` (Phase 2)
-- `grafana.yaml` (Phase 3)
-- `dashboards/services-overview.json` (Phase 3)
 
 To enable it, add to `kubernetes-manifests/kustomization.yaml`:
 
@@ -120,7 +121,10 @@ When enabled, `kustomization.yaml` patches each OTel-instrumented service to set
 
 ## Implementation plan
 
-### Phase 1: OTel Collector (prometheus-focused)
+### Phase 1: OTel Collector (prometheus-focused) ✅
+### Phase 2: Prometheus ✅
+### Phase 3: Grafana ✅
+### Phase 4: kustomization.yaml + service patches ✅
 
 **Goal:** Collector receives OTLP from services, generates RED metrics, exposes `/metrics` for Prometheus.
 
@@ -278,10 +282,10 @@ This makes the prometheus collector a transparent proxy for the GCP collector.
 - [x] `curl otel-collector-prom:8889/metrics` returns `boutique_traces_span_metrics_calls_total`
 - [x] Prometheus target `otel-collector-prom:8889` shows State=UP
 - [x] `boutique_traces_span_metrics_calls_total` has data points in Prometheus after load generator runs
-- [ ] Grafana datasource test passes
-- [ ] "Services Overview" dashboard renders all panels
-- [ ] p99 latency panel shows per-service breakdown
-- [ ] `google-cloud-operations` component still works independently (if applicable)
+- [x] Grafana datasource test passes
+- [x] "Services Overview" dashboard renders all panels
+- [x] p99 latency panel shows per-service breakdown
+- [N/A] `google-cloud-operations` component still works independently — out of scope per non-goals
 
 ## Resource estimates (per pod, no limits set for dev)
 

@@ -9,6 +9,13 @@ spec:
   policyTypes:
   - Ingress
   - Egress
-  ingress: []
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: grafana
+    ports:
+    - protocol: TCP
+      port: 9090
   egress:
   - {}

@@ -10,6 +10,11 @@ spec:
   - Ingress
   - Egress
   ingress:
-  - {}
+  - ports:
+    - protocol: TCP
+      port: 4317
+  - ports:
+    - protocol: TCP
+      port: 8889
   egress:
   - {}

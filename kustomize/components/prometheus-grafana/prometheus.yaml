@@ -52,10 +52,13 @@ spec:
           capabilities:
             drop:
               - ALL
-          privileged: false
           readOnlyRootFilesystem: true
         ports:
         - containerPort: 9090
+        resources:
+          requests:
+            cpu: 200m
+            memory: 512Mi
         volumeMounts:
         - name: config
           mountPath: /etc/prometheus

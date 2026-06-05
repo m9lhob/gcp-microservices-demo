@@ -12,12 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Define a default value so it's not empty if the builder fails to provide it
+# grpc.tools selects protoc by the builder's arch; its native linux_arm64 protoc
+# segfaults in some VMs (e.g. Orbstack), so force an amd64 builder. BuildKit would
+# otherwise auto-detect the host arch.
 ARG BUILDPLATFORM=linux/amd64
+ARG TARGETARCH=amd64
 
 # https://mcr.microsoft.com/product/dotnet/sdk
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0.100-noble@sha256:c7445f141c04f1a6b454181bd098dcfa606c61ba0bd213d0a702489e5bd4cd71 AS builder
-ARG TARGETARCH=amd64
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0-noble@sha256:8a90a473da5205a16979de99d2fc20975e922c68304f5c79d564e666dc3982fc AS builder
+ARG TARGETARCH
+
 WORKDIR /app
 COPY cartservice.csproj .
 RUN dotnet restore cartservice.csproj \
@@ -33,7 +37,7 @@ RUN dotnet publish cartservice.csproj \
     -o /cartservice
 
 # https://mcr.microsoft.com/product/dotnet/runtime-deps
-FROM mcr.microsoft.com/dotnet/runtime-deps:10.0.0-noble-chiseled@sha256:b857c8cb8d929183cfe4c6dd9994abba92a2639dd2dbaf06005379f815991604
+FROM --platform=linux/$TARGETARCH mcr.microsoft.com/dotnet/runtime-deps:10.0-noble@sha256:962ef681468320cc5ef25fa18259cf3200247cec2ee96c2574174d4824272151
 
 WORKDIR /app
 COPY --from=builder /cartservice .
